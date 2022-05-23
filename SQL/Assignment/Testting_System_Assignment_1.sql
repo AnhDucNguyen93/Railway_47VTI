@@ -1,5 +1,5 @@
-create database testing1;
-use testing1;
+create database Testing_Sysem_Assignment_1;
+use Testing_Sysem_Assignment_1;
 CREATE TABLE Department (
     departmentID INT PRIMARY KEY AUTO_INCREMENT,
     departmentName VARCHAR(255)
@@ -17,14 +17,16 @@ CREATE TABLE `Account` (
     FOREIGN KEY (departmentID)
         REFERENCES Department (departmentID),
     PositionId INT,
-    CreateDate DATE
+    CreateDate DATE,
+    foreign key(PositionId) references `position`(positionID)
 );
-alter table `account` add foreign key(PositionId) references `position`(positionID);
+
 CREATE TABLE `Group` (
     GroupID INT PRIMARY KEY AUTO_INCREMENT,
     GroupName VARCHAR(255),
-    CreateID VARCHAR(255),
-    CreateDate DATE
+    CreateID INT,
+    CreateDate DATE,
+    foreign key (CreateID) references `Account`(AccountID)
 );
 CREATE TABLE GroupAccount (
     GroupId INT,
@@ -53,6 +55,7 @@ CREATE TABLE Question (
     FOREIGN KEY (TypeId)
         REFERENCES typequestion(TypeID),
     CreatorID INT NOT NULL,
+    foreign key (CreatorID) references `Account`(AccountID),
     CreateDate DATE
 );
 CREATE TABLE answer (
@@ -72,11 +75,8 @@ CREATE TABLE Exam (
         REFERENCES categoryquestion (CategoryID),
     Duration TIME,
     CreatorID INT,
-    FOREIGN KEY (CreatorID)
-        REFERENCES question (CreatorID),
     CreateDate DATE,
-    FOREIGN KEY (CreateDate)
-        REFERENCES question (CreateDate)
+    foreign key (CreatorID) references Question(CreatorID)
 );
 CREATE TABLE ExamQuestion (
     ExamId INT,
@@ -85,3 +85,4 @@ CREATE TABLE ExamQuestion (
     QuestionID int,
     foreign key (QuestionID) references question(QuestionID)
 );
+
