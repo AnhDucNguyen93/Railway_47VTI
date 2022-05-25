@@ -1,5 +1,5 @@
-create database Testing_Sysem_Assignment_3;
-use Testing_Sysem_Assignment_3;
+create database Testing_Sysem_Assignment_4;
+use Testing_Sysem_Assignment_4;
 CREATE TABLE Department (
     DepartmentID INT PRIMARY KEY AUTO_INCREMENT,
     departmentName VARCHAR(255)
@@ -90,6 +90,7 @@ CREATE TABLE ExamQuestion (
     FOREIGN KEY (QuestionID)
         REFERENCES question (QuestionID)
 );
+alter table ExamQuestion add constraint primary key auto_increment(ExamId);
 INSERT INTO department (departmentID, departmentName)
 VALUES
 				(1, N'Marketing'),
@@ -202,87 +203,105 @@ insert into ExamQuestion (ExamId, QuestionID) values (7, 7);
 insert into ExamQuestion (ExamId, QuestionID) values (8, 8);
 insert into ExamQuestion (ExamId, QuestionID) values (9, 9);
 insert into ExamQuestion (ExamId, QuestionID) values (10, 10);
--- 2 Lấy ra tất cả các phòng ban
+-- Question 1
 SELECT 
-    *
+    A.*, D.departmentName
 FROM
-    Department;
--- 3 lấy ra id của phòng ban "Sale"
+    `account` AS A
+        JOIN
+    department D ON A.DepartmentID = D.DepartmentID;
+-- Question 2
 SELECT 
-    DepartmentID
+    A.*, D.departmentName
 FROM
-    Department
+    `account` AS A
+        JOIN
+    department D ON A.DepartmentID = D.DepartmentID
 WHERE
-    DepartmentName = N'Sale';
--- 45 lấy ra thông tin account có full name dài nhất
-SELECT 
-    *
+    A.CreateDate < '2022-01-22';
+--    Question 3
+ SELECT 
+    A.*, P.PositionName, D.departmentName
 FROM
-    Account
+    `account` A
+        JOIN
+    position P ON A.PositionId = P.PositionID
+        JOIN
+    department D ON A.DepartmentID = D.DepartmentID
 WHERE
-    LENGTH(Fullname) = (SELECT 
-            MAX(LENGTH(Fullname))
+    P.PositionName = 'dev';
+ --    Question 4
+ SELECT 
+    D.departmentName, COUNT(departmentName) AS SL
+FROM
+    `account` A
+        JOIN
+    department D ON A.DepartmentID = D.DepartmentID
+GROUP BY D.departmentName
+HAVING COUNT(departmentName) > '3';
+  --    Question 5
+SELECT 
+    E.QuestionID, Q.Content
+FROM
+    examquestion E
+        JOIN
+    question Q ON E.QuestionID = Q.QuestionID
+GROUP BY E.QuestionID;
+HAVING COUNT(E.QuestionID) = (SELECT 
+        MAX(countQue) AS maxC
+    FROM
+        (SELECT 
+            COUNT(E.QuestionID) AS countQue
         FROM
-            `account`)
-		AND	DepartmentID = 1;
-SELECT 
-    *
-FROM
-    Account
-WHERE
-    LENGTH(Fullname) = (SELECT 
-            MAX(LENGTH(Fullname))
-        FROM
-            `account`); 
--- 6 Lấy ra tên group đã tham gia trước ngày 20/12/2021
-SELECT 
-    GroupName
-FROM
-    `group`
-WHERE
-    CreateDate < '2021-12-20';
--- 7 Lấy ra ID của question có >= 4 câu trả lời
-SELECT 
-    a.QuestionId, COUNT(a.QuestionId) AS SL
-FROM
-    answer a
-GROUP BY a.QuestionId
-HAVING SL > 1
-ORDER BY SL desc;
--- 8 Lấy ra các mã đề thi có thời gian thi >= 60 phút và được tạo trước ngày 20/12/2021
-SELECT 
-    `Code`
-FROM
-    exam
-WHERE
-    Duration >= '60'
-        AND CreateDate < '2021-12-30';
--- 9  Lấy ra 5 group được tạo gần đây nhất
-SELECT 
-    *
-FROM
-    `group`
-ORDER BY CreateDate DESC
-LIMIT 5;
--- 10 Đếm số nhân viên thuộc department id = 2
-SELECT 
-    departmentID, COUNT(accountID) AS 'So luong'
-FROM
-    `Account`
-WHERE
-    DepartmentID = 2;
--- Lấy ra nhân viên có tên bắt đầu bằng chữ "L" và kết thúc bằng chữ "E"
-SELECT 
-    *
-FROM
-    `account`
-WHERE
-    Fullname LIKE 'L%E';
+            examquestion E
+        GROUP BY E.QuestionID) countTable);
 
-UPDATE `account` 
-SET 
-    Fullname = 'Nguyen Ba Loc',
-    Email = 'NGuyenanh@gmail.com'
-WHERE
-    AccountID = 5;
-    
+SELECT 
+    MAX(countQue) AS maxC
+FROM
+    (SELECT 
+        COUNT(E.QuestionID) AS countQue
+    FROM
+        examquestion E
+    GROUP BY E.QuestionID) countTable;
+
+-- Question 6
+SELECT 
+    q.CategoryID, cq.CategoryName, count(Q.CategoryID)
+FROM
+    question Q
+        JOIN
+    categoryquestion cq ON q.QuestionID = cq.CategoryID
+GROUP BY q.CategoryID;
+SELECT 
+    cq.CategoryID, cq.CategoryName, COUNT(q.CategoryID)
+FROM
+    categoryquestion cq
+        JOIN
+    question q ON cq.CategoryID = q.CategoryID
+GROUP BY q.CategoryID;
+-- Question 7
+SELECT 
+    Q.QuestionID, Q.Content, COUNT(E.QuestionID)
+FROM
+    examquestion E
+        JOIN
+    question Q ON E.QuestionID = Q.QuestionID
+GROUP BY Q.QuestionID;
+
+-- Question 8
+SELECT 
+    AN.QuestionId, AN.content
+FROM
+    answer AN
+        JOIN
+    question Q ON Q.QuestionID = AN.QuestionId
+GROUP BY AN.QuestionId
+HAVING COUNT(AN.QuestionId) = (SELECT 
+        MAX(SL) AS maxSL
+    FROM
+        (SELECT 
+            AN.QuestionId, COUNT(AN.questionId) AS SL
+        FROM
+            answer AS AN
+        GROUP BY AN.QuestionId) AS TB);
