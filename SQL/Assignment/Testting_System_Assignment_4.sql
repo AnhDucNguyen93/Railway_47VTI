@@ -246,9 +246,9 @@ FROM
     examquestion E
         JOIN
     question Q ON E.QuestionID = Q.QuestionID
-GROUP BY E.QuestionID;
+GROUP BY E.QuestionID
 HAVING COUNT(E.QuestionID) = (SELECT 
-        MAX(countQue) AS maxC
+        MAX(countQue) 
     FROM
         (SELECT 
             COUNT(E.QuestionID) AS countQue
@@ -305,3 +305,29 @@ HAVING COUNT(AN.QuestionId) = (SELECT
         FROM
             answer AS AN
         GROUP BY AN.QuestionId) AS TB);
+-- Question 9
+SELECT 
+    GA.*, COUNT(GA.AccountId) SL
+FROM
+    groupaccount GA
+        JOIN
+    `account` AC ON GA.AccountId = AC.AccountID
+GROUP BY GA.AccountId
+ORDER BY GA.AccountId ASC;
+-- Question 10 
+SELECT 
+    A.*, P.PositionName, COUNT(A.PositionId) AS SL
+FROM
+    account A
+        JOIN
+    position P ON A.PositionId = P.PositionID
+GROUP BY A.PositionId
+HAVING COUNT(A.PositionId) = (SELECT 
+        MIN(countP)
+    FROM
+        (SELECT 
+            COUNT(A.PositionId) AS countP
+        FROM
+            account A
+        JOIN position P ON A.PositionId = P.PositionId
+        GROUP BY A.PositionId) as MinCountP);

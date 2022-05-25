@@ -285,4 +285,3 @@ SET
     Email = 'NGuyenanh@gmail.com'
 WHERE
     AccountID = 5;
-    
