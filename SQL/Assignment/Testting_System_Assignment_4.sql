@@ -214,11 +214,65 @@ FROM
     position P ON A.PositionId = P.PositionID
 GROUP BY A.PositionId
 HAVING COUNT(A.PositionId) = (SELECT 
-        MIN(countP)
+        COUNT(A.PositionId) SL
     FROM
-        (SELECT 
-            COUNT(A.PositionId) AS countP
-        FROM
-            account A
-        JOIN position P ON A.PositionId = P.PositionId
-        GROUP BY A.PositionId) as MinCountP);
+        `account` A
+    GROUP BY A.PositionId
+    ORDER BY SL 
+    LIMIT 1);
+-- question 11
+SELECT 
+    A.AccountID, departmentName, PositionName, COUNT(1)
+FROM
+    `account` A
+        JOIN
+    department D ON A.DepartmentID = D.DepartmentID
+        JOIN
+    position P ON A.PositionId = P.PositionID
+GROUP BY A.PositionId , A.DepartmentID;
+-- Question 14
+SELECT 
+    *
+FROM
+    `group` G
+        LEFT JOIN
+    groupaccount GA ON G.GroupID = GA.GroupId
+WHERE
+    GA.AccountId IS NULL;
+-- Question 15
+SELECT 
+    *
+FROM
+    groupaccount GA
+        RIGHT JOIN
+    `group` G ON GA.GroupId = G.GroupID
+WHERE
+    GA.AccountId IS NULL;
+-- Question 18
+    SELECT g.GroupName, COUNT(ga.GroupID) AS SL
+FROM GroupAccount ga
+JOIN `Group` g ON ga.GroupID = g.GroupID
+GROUP BY g.GroupID
+HAVING COUNT(ga.GroupID) >= 1
+UNION
+SELECT g.GroupName, COUNT(ga.GroupID) AS SL
+FROM GroupAccount ga
+JOIN `Group` g ON ga.GroupID = g.GroupID
+GROUP BY g.GroupID
+HAVING COUNT(ga.GroupID) <= 7;
+
+SELECT A.Fullname
+FROM `Account` A
+right JOIN GroupAccount GA ON A.AccountID = GA.AccountID
+right JOIN `Group` G ON G.groupid = GA.groupid
+WHERE GA.GroupID = 1 or GA.GroupID =  2;
+
+SELECT A.FullName
+FROM `Account` A
+JOIN GroupAccount GA ON A.AccountID = GA.AccountID
+WHERE GA.GroupID = 1
+UNION
+SELECT A.FullName
+FROM `Account` A
+JOIN GroupAccount GA ON A.AccountID = GA.AccountID
+WHERE GA.GroupID = 2
