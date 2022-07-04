@@ -1,0 +1,29 @@
+package inheritance.question1.entity;
+
+public class KySu extends CanBo {
+    private String nganhDaoTao;
+
+    public KySu() {
+    }
+
+    public KySu(String fullName, int tuoi, GioiTinh gioiTinh, String diaChi, String nganhDaoTao) {
+        super(fullName, tuoi, gioiTinh, diaChi);
+        this.nganhDaoTao = nganhDaoTao;
+    }
+
+    public String getNganhDaoTao() {
+        return nganhDaoTao;
+    }
+
+    public void setNganhDaoTao(String nganhDaoTao) {
+        this.nganhDaoTao = nganhDaoTao;
+    }
+
+    @Override
+    public String toString() {
+        return "KySu{" +
+                "Ho ten= " + getFullName() +
+                "nganhDaoTao='" + nganhDaoTao + '\'' +
+                '}';
+    }
+}

@@ -49,6 +49,7 @@ public class Do_While {
                     accArray[i].department.departmentName);
             i++;
         } while (i<accArray.length);
+
         System.out.println("\n");
         System.out.println("------------Question 11----------");
         Department[] depArray = {department1,department2,department3};
